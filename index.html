@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MOHONA 🦋</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ===== ETHEREAL & MAGICAL THEME (ULTRA RESPONSIVE) ===== */
+    :root {
+      --bg-magical-1: #ffdde1; 
+      --bg-magical-2: #ee9ca7;
+      --bg-magical-3: #fdfbfb;
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-nav: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --primary: #ff4d6d; 
+      --primary-glow: rgba(255, 77, 109, 0.5);
+      --primary-soft: rgba(255, 77, 109, 0.15);
+      --text-dark: #2d3436;
+      --text-muted: #636e72;
+      --radius-lg: 32px;
+      --radius-md: 20px;
+      --transition-magic: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: all 0.4s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Bengali', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    /* 100% Full Width Responsive Frame */
+    body { 
+      background: linear-gradient(120deg, var(--bg-magical-1), var(--bg-magical-2), var(--bg-magical-3));
+      background-size: 300% 300%; animation: gradientBG 15s ease infinite;
+      color: var(--text-dark); 
+      min-height: 100dvh; display: flex; flex-direction: column;
+      overscroll-behavior: none; overflow-x: hidden;
+    }
+
+    #app-container {
+      width: 100%; min-height: 100dvh; position: relative; 
+      display: flex; flex-direction: column; overflow-x: hidden;
+    }
+
+    .fixed-element { position: fixed; width: 100%; left: 0; right: 0; z-index: 100; }
+
+    /* Magical Animations */
+    @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+    @keyframes floatMagic { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 15px var(--primary-glow); } 50% { box-shadow: 0 0 35px var(--primary-glow); } 100% { box-shadow: 0 0 15px var(--primary-glow); } }
+    @keyframes slideInUpBounce { 0% { transform: translateY(40px) scale(0.95); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.1); } }
+    @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: calc(200px + 100%) 0; } }
+
+    /* Particle Canvas */
+    #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: floatUp 4s linear infinite; box-shadow: 0 0 8px white; }
+    @keyframes floatUp { 0% { transform: translateY(100vh) scale(0); opacity: 0.6; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
+
+    /* Ripple Effect */
+    .ripple-target { position: relative; overflow: hidden; }
+    .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background: rgba(255, 255, 255, 0.4); pointer-events: none;}
+    @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+    /* Splash Screen */
+    #splash-screen {
+      inset: 0; background: linear-gradient(135deg, #fff0f3, #ffc8dd); z-index: 9999;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s ease-in-out;
+    }
+    .splash-logo { font-size: clamp(4rem, 15vw, 6rem); animation: floatMagic 3s infinite; filter: drop-shadow(0 15px 25px rgba(255, 77, 109, 0.4)); }
+    .splash-text { font-size: clamp(1.5rem, 6vw, 2rem); font-weight: 800; color: var(--primary); letter-spacing: 3px; margin-top: 10px; text-shadow: 0 5px 15px rgba(255,77,109,0.2); }
+
+    /* ===== MAGICAL AUTH VIEW ===== */
+    #auth-view { 
+      flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; 
+      padding: 20px; text-align: center; position: relative; z-index: 10; overflow: hidden;
+    }
+    
+    /* Floating Ethereal Text Elements (Only for Auth Background) */
+    .auth-bg-elements { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .float-txt {
+      position: absolute; bottom: -10%; left: var(--x); opacity: 0;
+      animation: magicalTextFloat var(--dur) ease-in-out infinite; animation-delay: var(--d);
+      font-weight: 800; white-space: nowrap; font-size: var(--sz);
+      text-shadow: 0 5px 15px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
+    }
+    @keyframes magicalTextFloat {
+      0% { transform: translateY(0) scale(0.8) rotate(-15deg); opacity: 0; }
+      20% { opacity: 0.7; }
+      80% { opacity: 0.7; }
+      100% { transform: translateY(-110vh) scale(1.4) rotate(15deg); opacity: 0; }
+    }
+
+    .auth-card { 
+      background: var(--glass-bg); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-radius: var(--radius-lg); 
+      border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 25px 60px rgba(255, 77, 109, 0.2); 
+      padding: clamp(25px, 6vw, 45px) clamp(20px, 5vw, 35px); 
+      width: 100%; max-width: 420px; z-index: 10; position: relative;
+      animation: slideInUpBounce 1s var(--transition-magic), pulseGlow 5s infinite;
+    }
+    .auth-card h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); color: var(--primary); margin-bottom: 5px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 5px rgba(255,77,109,0.1);}
+    .auth-card p { font-size: clamp(0.85rem, 3.5vw, 1rem); color: var(--text-muted); margin-bottom: 30px; font-weight: 600;}
+    
+    .input-group { position: relative; margin-bottom: 18px; }
+    .input-group input { 
+      width: 100%; padding: clamp(15px, 4vw, 18px) 15px; border: 2px solid rgba(255,77,109,0.15); border-radius: var(--radius-md); 
+      font-size: clamp(0.95rem, 4vw, 1.05rem); background: rgba(255,255,255,0.95); color: var(--text-dark); outline: none; transition: var(--transition-smooth); 
+    }
+    .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 25px var(--primary-soft); transform: translateY(-3px); }
+    .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--primary); padding: 5px; display: flex; align-items: center;}
+    
+    .btn { 
+      width: 100%; padding: clamp(15px, 4vw, 20px); background: linear-gradient(45deg, #ff4d6d, #ff758c, #ff4d6d); background-size: 200% auto;
+      color: #fff; border: none; border-radius: var(--radius-md); font-size: clamp(1rem, 4.5vw, 1.2rem); font-weight: 800; cursor: pointer; transition: var(--transition-magic); 
+      box-shadow: 0 10px 30px rgba(255, 77, 109, 0.4); display: flex; justify-content: center; align-items: center; gap: 8px; animation: shimmer 3s infinite;
+    }
+    .btn:active { transform: scale(0.94); box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3); }
+
+    /* Gallery App View */
+    #gallery-view { display: none; flex-direction: column; padding-top: clamp(75px, 15vw, 85px); position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; width: 100%;}
+    
+    /* Top Navbar */
+    .app-navbar { 
+      top: 0; background: var(--glass-nav); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      padding: clamp(10px, 3vw, 15px) clamp(15px, 5vw, 25px); display: flex; justify-content: space-between; align-items: center; 
+      border-bottom: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .nav-profile { display: flex; align-items: center; gap: clamp(10px, 3vw, 15px); }
+    .profile-pic { 
+      width: clamp(42px, 10vw, 50px); height: clamp(42px, 10vw, 50px); 
+      border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; 
+      font-size: clamp(1.4rem, 5vw, 1.8rem); border: 2px solid var(--primary); box-shadow: 0 4px 12px rgba(255, 77, 109, 0.2); animation: floatMagic 5s infinite;
+    }
+    .nav-text h2 { font-size: clamp(1.05rem, 4.5vw, 1.25rem); font-weight: 800; color: var(--text-dark); margin-bottom: 0px; letter-spacing: 0.5px; white-space: nowrap;}
+    .nav-text p { font-size: clamp(0.7rem, 3vw, 0.85rem); color: var(--primary); font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+    
+    .logout-icon { 
+      color: var(--text-muted); cursor: pointer; padding: clamp(6px, 2vw, 10px); 
+      border-radius: 50%; transition: var(--transition-magic); background: rgba(0,0,0,0.03); display: flex; align-items: center;
+    }
+    .logout-icon svg { width: clamp(20px, 6vw, 24px); height: clamp(20px, 6vw, 24px); }
+    .logout-icon:active { transform: scale(0.85); background: var(--primary-soft); color: var(--primary); }
+
+    /* Category Folder Tabs */
+    .category-tabs { 
+      display: flex; gap: clamp(8px, 2vw, 12px); padding: clamp(12px, 3vw, 18px) 5% 10px; 
+      overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; 
+      justify-content: flex-start; 
+    }
+    .category-tabs::-webkit-scrollbar { display: none; }
+    @media(min-width: 600px) { .category-tabs { justify-content: center; } }
+
+    .cat-btn {
+      white-space: nowrap; 
+      padding: clamp(8px, 2.5vw, 10px) clamp(16px, 4vw, 22px); 
+      background: rgba(255,255,255,0.9); border: 2px solid transparent;
+      border-radius: 30px; font-weight: 700; 
+      font-size: clamp(0.85rem, 3.5vw, 0.95rem); 
+      color: var(--text-muted); cursor: pointer;
+      transition: var(--transition-magic); box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      flex-shrink: 0; 
+    }
+    .cat-btn.active { background: linear-gradient(45deg, #ff4d6d, #ff758c); color: #fff; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(255, 77, 109, 0.3); border-color: rgba(255,255,255,0.3);}
+
+    /* === MAGICAL BORDER & PREVIEW === */
+    .preview-outer {
+      position: relative; width: 92%; max-width: 700px; margin: 10px auto 20px; padding: clamp(2px, 1vw, 4px); border-radius: calc(var(--radius-lg) + 4px);
+      background: linear-gradient(60deg, #ff4d6d, #f9cb28, #00f5d4, #ff4d6d, #9d4edd);
+      background-size: 400% 400%; animation: animatedBorder 5s ease infinite, pulseGlow 4s infinite;
+    }
+    .preview-container {
+      aspect-ratio: 4/3; background: #fff; border-radius: var(--radius-lg); overflow: hidden; position: relative; cursor: pointer; 
+      transition: var(--transition-magic); touch-action: pan-y; -webkit-user-select: none; user-select: none;
+      background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite; 
+    }
+    @media(min-width: 1024px) { .preview-container { aspect-ratio: 16/9; } }
+
+    .preview-container:active { transform: scale(0.98); }
+    .preview-container img { width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.5s ease; pointer-events: none;}
+    .preview-container img.loaded { opacity: 1; }
+    
+    .preview-hint { position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.95); color: var(--primary); font-size: clamp(0.65rem, 3vw, 0.75rem); font-weight: 800; padding: clamp(5px, 2vw, 6px) clamp(10px, 3vw, 14px); border-radius: 20px; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px; backdrop-filter: blur(5px);}
+    .carousel-badge { position: absolute; top: 12px; left: 12px; background: var(--primary); color: #fff; font-size: clamp(0.65rem, 3vw, 0.75rem); font-weight: 700; padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2.5vw, 12px); border-radius: 20px; box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3); display: flex; align-items: center; gap: 5px;}
+    .carousel-badge::before { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; animation: heartbeat 1.5s infinite; }
+
+    /* Heartburst Container */
+    .burst-container { position: absolute; inset: 0; pointer-events: none; z-index: 20; overflow: hidden; }
+    .burst-heart { position: absolute; font-size: clamp(1.2rem, 5vw, 1.8rem); color: #ff4d6d; opacity: 0; filter: drop-shadow(0 0 8px rgba(255,77,109,0.6)); }
+    @keyframes flyOut { 0% { transform: translate(0,0) scale(0.5); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); opacity: 0; } }
+
+    /* Smart Empty State */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); display: none; animation: slideInUpBounce 0.5s ease; flex: 1; justify-content: center; flex-direction: column; align-items: center; }
+    .empty-state svg { width: clamp(50px, 15vw, 80px); height: clamp(50px, 15vw, 80px); margin-bottom: 15px; color: var(--primary); filter: drop-shadow(0 8px 15px rgba(255,77,109,0.2)); animation: floatMagic 3s infinite;}
+    .empty-state p { font-size: clamp(1rem, 4.5vw, 1.15rem); font-weight: 700; color: var(--text-dark); margin-bottom: 5px;}
+    .empty-state span { font-size: clamp(0.8rem, 3.5vw, 0.9rem); color: var(--muted); }
+
+    /* Thumbnails Grid */
+    .thumbnail-row { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(clamp(85px, 28vw, 110px), 1fr)); 
+      gap: clamp(8px, 2.5vw, 15px); padding: 0 5% 20px; flex: 1; perspective: 1000px; 
+    }
+
+    .thumb-card {
+      aspect-ratio: 1/1; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; border: 3px solid transparent; 
+      transition: var(--transition-magic); background: rgba(255,255,255,0.9); position: relative; 
+      opacity: 0; transform: translateY(20px) rotateX(5deg); box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .thumb-card.show { opacity: 1; transform: translateY(0) rotateX(0deg); }
+    .thumb-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
+    .thumb-card::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.05); transition: 0.3s; pointer-events: none; }
+    .thumb-card.active { border-color: var(--primary); transform: scale(1.05) translateY(-3px); box-shadow: 0 10px 20px rgba(255, 77, 109, 0.25); z-index: 2; }
+    .thumb-card.active img { transform: scale(1.05); }
+    .thumb-card.active::after { background: transparent; }
+
+    /* Magic FAB */
+    .fab-btn {
+      position: fixed; bottom: clamp(20px, 5vw, 30px); right: clamp(20px, 5vw, 30px); 
+      width: clamp(50px, 12vw, 60px); height: clamp(50px, 12vw, 60px);
+      background: linear-gradient(45deg, #ff4d6d, #ff758c); color: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; 
+      box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4); z-index: 200; cursor: pointer; border: 2px solid white; 
+      transition: var(--transition-magic); animation: heartbeat 2.5s infinite;
+    }
+    .fab-btn svg { width: clamp(22px, 6vw, 26px); height: clamp(22px, 6vw, 26px); }
+    .fab-btn:hover { transform: scale(1.1) rotate(90deg); animation: none; }
+    
+    /* Premium Bottom Sheet */
+    .bottom-sheet-overlay { inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; backdrop-filter: blur(5px); transition: 0.3s; }
+    .bottom-sheet { 
+      position: absolute; bottom: -100%; left: 0; right: 0; margin: 0 auto; width: 100%; max-width: 500px;
+      background: white; border-radius: 35px 35px 0 0; padding: clamp(25px, 6vw, 35px) clamp(20px, 5vw, 25px) clamp(30px, 8vw, 40px); 
+      transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); 
+      max-height: 85vh; overflow-y: auto; overscroll-behavior: contain;
+    }
+    .bottom-sheet.show { bottom: 0; }
+    .bs-header { text-align: center; margin-bottom: 25px; font-size: clamp(1.15rem, 5vw, 1.3rem); font-weight: 800; color: var(--text-dark); display: flex; flex-direction: column; align-items: center; gap: 4px;}
+    .bs-header span { font-size: clamp(0.8rem, 3.5vw, 0.85rem); color: var(--primary); font-weight: 600;}
+    
+    .folder-select { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 3vw, 15px); margin-bottom: 25px; }
+    .folder-opt { padding: clamp(12px, 3vw, 16px) 5px; border: 2px solid #f0f2f5; border-radius: 16px; text-align: center; cursor: pointer; font-size: clamp(0.85rem, 3.5vw, 0.95rem); font-weight: 800; color: var(--muted); transition: var(--transition-magic); background: #fafbfc; display: flex; flex-direction: column; align-items: center;}
+    .folder-opt.selected { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255,77,109,0.1); }
+    .folder-opt svg { display: block; margin-bottom: 6px; width: clamp(22px, 6vw, 26px); height: clamp(22px, 6vw, 26px); transition: 0.3s; }
+    .folder-opt.selected svg { transform: scale(1.15); }
+
+    .upload-action-btn { width: 100%; padding: clamp(14px, 4vw, 18px); background: linear-gradient(45deg, #ff4d6d, #ff758c); color: #fff; border: none; border-radius: 16px; font-size: clamp(1rem, 4vw, 1.1rem); font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: var(--transition-magic); box-shadow: 0 8px 25px rgba(255, 77, 109, 0.3); }
+    .upload-action-btn:active { transform: scale(0.96); }
+    #file-input { display: none; }
+
+    /* Cinematic Fullscreen Modal */
+    #photo-modal { inset: 0; background: rgba(10, 10, 15, 0.98); backdrop-filter: blur(15px); z-index: 9999; display: none; flex-direction: column; opacity: 0; transition: 0.3s; }
+    #photo-modal.show { opacity: 1; }
+    .modal-header { padding: clamp(15px, 4vw, 25px) 5%; display: flex; justify-content: space-between; align-items: center; }
+    .modal-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 5% 15px; overflow: hidden;}
+    .modal-img-wrap img { max-width: 100%; max-height: 100%; border-radius: 16px; box-shadow: 0 0 40px rgba(255,77,109,0.15); object-fit: contain;}
+    .swipe-down-hint { text-align: center; color: rgba(255,255,255,0.6); font-size: clamp(0.75rem, 3.5vw, 0.85rem); font-weight: 600; margin-bottom: 15px; animation: floatMagic 2s infinite; letter-spacing: 0.5px;}
+    
+    /* Footer & Toast */
+    .footer { text-align: center; padding: 20px 10px; font-size: clamp(0.75rem, 3vw, 0.85rem); color: var(--muted); font-weight: 700; margin-top: auto; position: relative; z-index: 10; line-height: 1.4;}
+    .toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%) translateY(-100px) scale(0.9); background: white; padding: clamp(12px, 3vw, 15px) clamp(18px, 5vw, 25px); border-radius: 30px; font-size: clamp(0.85rem, 3.5vw, 0.95rem); font-weight: 800; opacity: 0; transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10001; box-shadow: 0 15px 35px rgba(0,0,0,0.15); color: var(--text-dark); display: flex; align-items: center; gap: 8px; width: max-content; max-width: 90vw; border: 1.5px solid rgba(255,77,109,0.1);}
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  </style>
+</head>
+<body>
+
+<div id="app-container">
+  
+  <div id="particles"></div>
+
+  <div class="fixed-element" id="splash-screen">
+    <div class="splash-logo">🦋</div>
+    <div class="splash-text">MOHONA</div>
+  </div>
+
+  <div id="auth-view">
+    <div class="auth-bg-elements">
+      <span class="float-txt" style="--x: 10%; --d: 0s; --dur: 15s; --sz: 2rem; color: rgba(255, 107, 129, 0.4);">MOHONA</span>
+      <span class="float-txt" style="--x: 75%; --d: 2s; --dur: 18s; --sz: 1.5rem; color: rgba(161, 196, 253, 0.5);">mohona's memories</span>
+      <span class="float-txt" style="--x: 35%; --d: 5s; --dur: 12s; --sz: 3rem; color: rgba(253, 203, 241, 0.6);">🦋</span>
+      <span class="float-txt" style="--x: 85%; --d: 1s; --dur: 20s; --sz: 2.2rem; color: rgba(255, 154, 158, 0.4);">Our Story</span>
+      <span class="float-txt" style="--x: 20%; --d: 7s; --dur: 14s; --sz: 2.5rem; color: rgba(255, 236, 210, 0.7);">🌸</span>
+      <span class="float-txt" style="--x: 60%; --d: 4s; --dur: 16s; --sz: 1.8rem; color: rgba(207, 217, 223, 0.5);">Forever</span>
+      <span class="float-txt" style="--x: 5%; --d: 9s; --dur: 13s; --sz: 2rem; color: rgba(251, 194, 235, 0.6);">✨</span>
+      <span class="float-txt" style="--x: 50%; --d: 11s; --dur: 17s; --sz: 1.6rem; color: rgba(224, 195, 252, 0.5);">Endless Love</span>
+      <span class="float-txt" style="--x: 90%; --d: 8s; --dur: 19s; --sz: 2.8rem; color: rgba(255, 154, 158, 0.6);">💖</span>
+      <span class="float-txt" style="--x: 45%; --d: 3s; --dur: 15s; --sz: 1.4rem; color: rgba(161, 196, 253, 0.5);">Beautiful</span>
+    </div>
+
+    <div class="auth-card">
+      <h1>স্বাগতম মোহনা 🦋</h1>
+      <p>আমাদের স্পেশাল মেমোরি গ্যালারি</p>
+      
+      <form style="display:none" aria-hidden="true"><input type="text"/><input type="password"/></form>
+      
+      <div class="input-group">
+        <input type="text" id="email" placeholder="ইমেইল" autocomplete="new-password" spellcheck="false" readonly onfocus="this.removeAttribute('readonly');">
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="পাসওয়ার্ড" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+        <span class="toggle-password" id="toggle-pass" onclick="togglePassword()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </span>
+      </div>
+      
+      <button class="btn ripple-target" id="login-btn" disabled>
+        প্রবেশ কর <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="gallery-view">
+    <div class="fixed-element app-navbar" id="app-navbar">
+      <div class="nav-profile">
+        <div class="profile-pic">🦋</div>
+        <div class="nav-text">
+          <h2 id="greeting-text">MOHONA ✨</h2>
+          <p id="sub-greeting">Beautiful Memories</p>
+        </div>
+      </div>
+      <div class="logout-icon ripple-target" id="logout-btn" title="লগআউট">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      </div>
+    </div>
+
+    <div style="height: clamp(75px, 12vw, 85px);"></div> 
+
+    <div class="category-tabs" id="category-tabs">
+      <div class="cat-btn active ripple-target" data-filter="all">🌸 সব ছবি</div>
+      <div class="cat-btn ripple-target" data-filter="only_me">🙋‍♀️ শুধু মোহনা</div>
+      <div class="cat-btn ripple-target" data-filter="friend">👯‍♀️ ফ্রেন্ডস</div>
+      <div class="cat-btn ripple-target" data-filter="documents">📁 ডকুমেন্টস</div>
+    </div>
+
+    <div class="empty-state" id="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      <p id="empty-text-main">ফোল্ডার ফাঁকা মোহনা! 🥺</p>
+      <span id="empty-text-sub">নিচ থেকে নতুন ছবি আপলোড করো</span>
+    </div>
+
+    <div class="preview-outer" id="preview-wrapper">
+      <div class="preview-container ripple-target" id="preview-container">
+        <div class="carousel-badge" id="carousel-badge">Auto</div>
+        <img id="main-preview-img" src="" alt="Preview">
+        <div class="burst-container" id="burst-container"></div>
+        <div class="preview-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          ট্যাপ
+        </div>
+      </div>
+    </div>
+
+    <div class="thumbnail-row" id="photo-grid"></div>
+
+    <div class="footer" id="footer-quote">"প্রতিটি ছবি একটি না বলা গল্প" 💖<br><span style="font-size:clamp(0.65rem, 2.5vw, 0.75rem); font-weight:500;">Developed by mohona's fans</span></div>
+  </div>
+  
+  <div class="fab-btn ripple-target" id="fab-btn" style="display: none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+  </div>
+
+  <div class="fixed-element bottom-sheet-overlay" id="bs-overlay">
+    <div class="bottom-sheet" id="bs-content">
+      <div class="bs-header">
+        কোথায় আপলোড করবে মোহনা? 📁
+        <span>সঠিক ফোল্ডার বেছে নাও</span>
+      </div>
+      <div class="folder-select">
+        <div class="folder-opt selected ripple-target" data-val="only_me">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          শুধু মোহনা
+        </div>
+        <div class="folder-opt ripple-target" data-val="friend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          ফ্রেন্ডস
+        </div>
+        <div class="folder-opt ripple-target" data-val="documents" style="grid-column: span 2;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          ডকুমেন্টস
+        </div>
+      </div>
+      <label class="upload-action-btn ripple-target" id="upload-label" for="file-input">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        ছবি নির্বাচন করো
+      </label>
+      <input type="file" id="file-input" accept="image/*" multiple>
+    </div>
+  </div>
+
+  <div class="fixed-element" id="photo-modal">
+    <div class="modal-header">
+      <button class="icon-btn ripple-target" id="close-modal" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: clamp(38px, 10vw, 44px); height: clamp(38px, 10vw, 44px); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div style="color: #fff; font-size: clamp(0.85rem, 3.5vw, 0.95rem); align-self: center; font-weight: 700; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 20px; backdrop-filter: blur(5px);" id="modal-date"></div>
+      <div style="width: clamp(38px, 10vw, 44px);"></div>
+    </div>
+    <div class="modal-image-container" id="modal-img-container">
+      <img id="modal-img" src="" alt="Full view">
+    </div>
+    <div class="swipe-down-hint">↓ নিচে সোয়াইপ করে কাটুন ↓</div>
+    <div style="padding: 15px 5% 35px; display: flex; gap: clamp(10px, 3vw, 15px); justify-content: center;">
+      <button class="btn ripple-target" id="download-btn" style="width: 100%; max-width: 160px; padding: clamp(12px, 3vw, 14px); font-size: clamp(0.9rem, 3.5vw, 1rem); border-radius: 30px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> ডাউনলোড
+      </button>
+      <button class="btn ripple-target" id="delete-btn" style="width: 100%; max-width: 160px; padding: clamp(12px, 3vw, 14px); font-size: clamp(0.9rem, 3.5vw, 1rem); border-radius: 30px; background: rgba(255, 77, 109, 0.2); border: 1.5px solid rgba(255,77,109,0.5); color: #ff4d6d; backdrop-filter: blur(10px);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> ডিলিট
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const CLOUD_NAME = "dcpxgg0d9"; 
+    const UPLOAD_PRESET = "mohona-gallary";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDT7a8nskv3tI3k6smLHTVwm_WOOGaXP1s",
+      authDomain: "m-gallary-d382b.firebaseapp.com",
+      projectId: "m-gallary-d382b",
+      storageBucket: "m-gallary-d382b.firebasestorage.app",
+      messagingSenderId: "664669821460",
+      appId: "1:664669821460:web:6b2999c384f2f9bd5ea501"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const DB_COLLECTION = "mohona_db";
+
+    let allPhotos = [];
+    let filteredPhotos = [];
+    let currentPhoto = null;
+    let activeCategory = localStorage.getItem('lastCategory') || 'all'; 
+    let carouselTimer = null;
+    let carouselIndex = 0;
+    let authVerified = false;
+    let splashMinTimePassed = false;
+    let idleTimer;
+
+    const splashScreen = document.getElementById('splash-screen');
+    const authView = document.getElementById('auth-view');
+    const galleryView = document.getElementById('gallery-view');
+    const fabBtn = document.getElementById('fab-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const emailInput = document.getElementById('email');
+    const passInput = document.getElementById('password');
+    const photoGrid = document.getElementById('photo-grid');
+    const emptyState = document.getElementById('empty-state');
+    const previewWrapper = document.getElementById('preview-wrapper');
+    const mainPreviewImg = document.getElementById('main-preview-img');
+    const photoModal = document.getElementById('photo-modal');
+    const toastEl = document.getElementById('toast');
+    const subGreeting = document.getElementById('sub-greeting');
+
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const isMobile = window.innerWidth < 768;
+      const particleCount = isMobile ? 15 : 30; 
+      
+      for(let i=0; i<particleCount; i++){
+        let p = document.createElement('div');
+        p.className = 'particle';
+        let size = Math.random() * 5 + 2;
+        p.style.width = size + 'px'; p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    document.addEventListener('click', function(e) {
+      let target = e.target.closest('.ripple-target');
+      if (!target) return;
+      let rect = target.getBoundingClientRect();
+      let ripple = document.createElement('span');
+      let diameter = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = diameter + 'px';
+      ripple.style.left = e.clientX - rect.left - diameter / 2 + 'px';
+      ripple.style.top = e.clientY - rect.top - diameter / 2 + 'px';
+      ripple.classList.add('ripple');
+      target.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    const quotes = ["Beautiful Memories", "তোর হাসিতেই আমার সুখ 🌸", "স্মৃতিগুলো যত্নে থাকুক 🤍", "Mohona's World ✨"];
+    function setSmartGreeting() {
+      const h = new Date().getHours();
+      let text = "MOHONA ✨";
+      if (h >= 5 && h < 10) text = "শুভ সকাল মোহনা 🌤️";
+      else if (h >= 10 && h < 14) text = "শুভ দুপুর মোহনা ☀️";
+      else if (h >= 14 && h < 17) text = "শুভ বিকেল মোহনা ☕";
+      else if (h >= 17 && h < 20) text = "শুভ সন্ধ্যা মোহনা 🌆";
+      else if (h >= 20 && h < 23) text = "শুভ রাত্রি মোহনা 🌙";
+      else text = "অনেক রাত হলো, ঘুমিয়ে পড়ো মোহনা 🥺";
+      document.getElementById('greeting-text').innerText = text;
+    }
+    setSmartGreeting();
+    
+    setInterval(() => {
+      if(!authVerified || !window.appUser) return;
+      subGreeting.style.opacity = 0;
+      setTimeout(() => {
+        subGreeting.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        subGreeting.style.opacity = 1;
+      }, 300);
+    }, 10000);
+
+    function resetIdleTimer() {
+      clearTimeout(idleTimer);
+      if(subGreeting.innerText === "কোথায় হারিয়ে গেলে মোহনা? 🥺") subGreeting.innerText = "Welcome back 🤍";
+      idleTimer = setTimeout(() => {
+        if(window.appUser && galleryView.style.display === 'flex') {
+           subGreeting.style.opacity = 0;
+           setTimeout(() => { subGreeting.innerText = "কোথায় হারিয়ে গেলে মোহনা? 🥺"; subGreeting.style.opacity = 1; }, 300);
+        }
+      }, 30000); 
+    }
+    window.onload = resetIdleTimer; document.onmousemove = resetIdleTimer; document.onkeypress = resetIdleTimer; document.ontouchstart = resetIdleTimer;
+
+    // --- ZERO-FLICKER AUTH SYSTEM ---
+    setTimeout(() => { splashMinTimePassed = true; resolveAuthUI(); }, 1200); 
+    
+    onAuthStateChanged(auth, (user) => { 
+      authVerified = true; 
+      window.appUser = user; 
+      resolveAuthUI();
+    });
+
+    function resolveAuthUI() {
+      if(authVerified && splashMinTimePassed) {
+        if (window.appUser) {
+          authView.style.display = 'none'; 
+          galleryView.style.display = 'flex'; 
+          fabBtn.style.display = 'flex';
+          loadPhotos(); updateCategoryUI();
+        } else {
+          galleryView.style.display = 'none'; 
+          fabBtn.style.display = 'none'; 
+          authView.style.display = 'flex';
+        }
+        if(splashScreen.style.display !== 'none') {
+           splashScreen.style.opacity = '0';
+           setTimeout(() => splashScreen.style.display = 'none', 600);
+        }
+      }
+    }
+
+    window.togglePassword = () => {
+      const isPass = passInput.type === "password";
+      passInput.type = isPass ? "text" : "password";
+      document.getElementById("toggle-pass").innerHTML = isPass ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>` : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    }
+    
+    const validateInputs = () => { loginBtn.disabled = !(emailInput.value.trim() && passInput.value.trim()); }
+    emailInput.addEventListener('input', validateInputs); passInput.addEventListener('input', validateInputs);
+
+    document.getElementById('login-btn').onclick = async () => {
+      const email = emailInput.value.trim(); const password = passInput.value.trim();
+      loginBtn.innerHTML = 'অপেক্ষা কর... ⏳';
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        fireConfetti(); showToast('স্বাগতম মোহনা 🤍', 'success');
+        emailInput.value = ''; passInput.value = ''; validateInputs();
+      } catch (error) {
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+          try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            fireConfetti(); showToast('আইডি তৈরি হয়েছে! স্বাগতম মোহনা ✨', 'success');
+            emailInput.value = ''; passInput.value = ''; validateInputs();
+          } catch (e) { showToast('পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে!', 'error'); }
+        } else { showToast('ইমেইল বা পাসওয়ার্ড ভুল মোহনা! 🥺', 'error'); }
+      }
+      loginBtn.innerHTML = 'প্রবেশ কর <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
+    };
+
+    function fireConfetti() {
+      for(let i=0; i<30; i++) {
+        let c = document.createElement('div');
+        c.style.cssText = `position:fixed; top:50%; left:50%; width:8px; height:8px; background:${['#ff4d6d','#00f5d4','#f9cb28'][Math.floor(Math.random()*3)]}; border-radius:50%; pointer-events:none; z-index:99999; transition:all 1s ease-out; transform:translate(-50%,-50%);`;
+        document.body.appendChild(c);
+        setTimeout(() => {
+          let ang = Math.random()*Math.PI*2; let dist = Math.random()*250+50;
+          c.style.transform = `translate(calc(-50% + ${Math.cos(ang)*dist}px), calc(-50% + ${Math.sin(ang)*dist}px)) scale(0)`;
+          c.style.opacity = 0;
+        }, 10);
+        setTimeout(() => c.remove(), 1000);
+      }
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', () => { 
+      signOut(auth); showToast('লগআউট করা হয়েছে 👋'); clearInterval(carouselTimer); 
+      activeCategory = 'all'; localStorage.removeItem('lastCategory');
+    });
+
+    let toastTimeout;
+    function showToast(msg, type = 'normal') {
+      clearTimeout(toastTimeout);
+      const icon = type === 'error' ? '⚠️' : (type === 'success' ? '✨' : '🌸');
+      toastEl.innerHTML = `<span style="font-size:1.1rem">${icon}</span> ${msg}`;
+      toastEl.className = `toast show ${type}`;
+      toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 3500);
+    }
+
+    const emptyStates = {
+      'all': {m: 'ফোল্ডার পুরো ফাঁকা মোহনা! 🥺', s: 'নিচ থেকে নতুন ছবি আপলোড করো'},
+      'only_me': {m: 'তোর সুন্দর ছবিগুলো কোথায়? 🦋', s: 'তাড়াতাড়ি নিজের ছবি আপলোড দে'},
+      'friend': {m: 'বন্ধুদের সাথে কোনো স্মৃতি নেই? 👯‍♀️', s: 'ফ্রেন্ডস ফোল্ডারে ছবি রাখো'},
+      'documents': {m: 'কোনো ডকুমেন্টস নেই 📁', s: 'জরুরি ফাইলগুলো এখানে রাখো'}
+    };
+
+    function updateCategoryUI() {
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.remove('active');
+        if(b.getAttribute('data-filter') === activeCategory) b.classList.add('active');
+      });
+      const activeEl = document.querySelector('.cat-btn.active');
+      if(activeEl) {
+          const tabContainer = document.getElementById('category-tabs');
+          tabContainer.scrollTo({
+              left: activeEl.offsetLeft - tabContainer.offsetWidth/2 + activeEl.offsetWidth/2,
+              behavior: 'smooth'
+          });
+      }
+      
+      document.getElementById('empty-text-main').innerText = emptyStates[activeCategory].m;
+      document.getElementById('empty-text-sub').innerText = emptyStates[activeCategory].s;
+    }
+
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        activeCategory = e.target.getAttribute('data-filter');
+        localStorage.setItem('lastCategory', activeCategory);
+        updateCategoryUI(); renderGallery();
+      });
+    });
+
+    let selectedUploadFolder = 'only_me';
+    fabBtn.addEventListener('click', () => {
+      document.body.style.overflow = 'hidden'; 
+      document.getElementById('bs-overlay').style.display = 'block';
+      setTimeout(() => document.getElementById('bs-content').classList.add('show'), 10);
+    });
+    
+    document.getElementById('bs-overlay').addEventListener('click', (e) => { if(e.target.id === 'bs-overlay') closeBottomSheet(); });
+    function closeBottomSheet() {
+      document.body.style.overflow = '';
+      document.getElementById('bs-content').classList.remove('show');
+      document.getElementById('bs-overlay').style.opacity = '0';
+      setTimeout(() => document.getElementById('bs-overlay').style.display = 'none', 400);
+    }
+
+    document.querySelectorAll('.folder-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        document.querySelectorAll('.folder-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedUploadFolder = opt.getAttribute('data-val');
+      });
+    });
+
+    document.getElementById('file-input').addEventListener('change', async (e) => {
+      const files = e.target.files;
+      if (!files.length) return;
+      const uploadLbl = document.getElementById('upload-label');
+      uploadLbl.innerHTML = 'আপলোড হচ্ছে ম্যাজিক... ⏳'; uploadLbl.style.pointerEvents = 'none';
+
+      for (let file of files) {
+        if(file.size > 10 * 1024 * 1024) { showToast('ছবি ১০ এমবির কম হতে হবে!', 'error'); continue; }
+        const formData = new FormData();
+        formData.append('file', file); formData.append('upload_preset', UPLOAD_PRESET);
+        try {
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+          const data = await res.json();
+          if (data.secure_url) {
+            await addDoc(collection(db, DB_COLLECTION), {
+              url: data.secure_url, fileName: file.name, category: selectedUploadFolder, 
+              date: new Date().toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }),
+              timestamp: Date.now()
+            });
+          }
+        } catch (error) { showToast('আপলোডে সমস্যা হয়েছে 😔', 'error'); }
+      }
+      e.target.value = ''; 
+      uploadLbl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> ছবি নির্বাচন করো'; 
+      uploadLbl.style.pointerEvents = 'auto';
+      closeBottomSheet(); fireConfetti(); showToast('ফোল্ডারে সেভ হয়েছে 🌸', 'success');
+    });
+
+    function loadPhotos() {
+      onSnapshot(query(collection(db, DB_COLLECTION), orderBy("timestamp", "desc")), (snapshot) => {
+        allPhotos = [];
+        snapshot.forEach(docSnap => allPhotos.push({ id: docSnap.id, ...docSnap.data() }));
+        renderGallery();
+      });
+    }
+
+    function renderGallery() {
+      filteredPhotos = allPhotos.filter(p => activeCategory === 'all' || p.category === activeCategory);
+      photoGrid.innerHTML = ''; clearInterval(carouselTimer);
+      
+      if (filteredPhotos.length === 0) {
+        emptyState.style.display = 'flex'; previewWrapper.style.display = 'none'; currentPhoto = null;
+      } else {
+        emptyState.style.display = 'none'; previewWrapper.style.display = 'block';
+        
+        filteredPhotos.forEach((photo, index) => {
+          const div = document.createElement('div');
+          div.className = 'thumb-card ripple-target'; div.id = 'thumb-' + photo.id;
+          div.innerHTML = `<img src="${photo.url}" loading="lazy" alt="Memory">`;
+          div.addEventListener('click', () => { setPreview(photo); clearInterval(carouselTimer); startCarousel(); });
+          photoGrid.appendChild(div);
+          
+          setTimeout(() => div.classList.add('show'), index * 40 + 50);
+        });
+
+        carouselIndex = 0; let pToSet = filteredPhotos[0];
+        if(currentPhoto) {
+           const exists = filteredPhotos.find(p => p.id === currentPhoto.id);
+           if(exists) { pToSet = exists; carouselIndex = filteredPhotos.indexOf(exists); }
+        }
+        setPreview(pToSet); startCarousel();
+      }
+    }
+
+    function setPreview(photo) {
+      if(!photo) return;
+      currentPhoto = photo;
+      
+      mainPreviewImg.classList.remove('loaded', 'carousel-anim');
+      void mainPreviewImg.offsetWidth; 
+      
+      mainPreviewImg.src = photo.url;
+      mainPreviewImg.onload = () => { mainPreviewImg.classList.add('loaded', 'carousel-anim'); };
+      
+      document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
+      const activeThumb = document.getElementById('thumb-' + photo.id);
+      if(activeThumb) {
+        activeThumb.classList.add('active');
+        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+
+    function moveCarousel(direction) {
+       if(filteredPhotos.length <= 1) return;
+       if(direction === 'next') carouselIndex = (carouselIndex + 1) % filteredPhotos.length;
+       if(direction === 'prev') carouselIndex = (carouselIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+       setPreview(filteredPhotos[carouselIndex]);
+    }
+
+    function startCarousel() {
+      clearInterval(carouselTimer);
+      if(filteredPhotos.length <= 1) { document.getElementById('carousel-badge').style.display = 'none'; return; }
+      document.getElementById('carousel-badge').style.display = 'flex';
+      carouselTimer = setInterval(() => { if(photoModal.style.display !== 'flex') moveCarousel('next'); }, 5000); 
+    }
+
+    const pCont = document.getElementById('preview-container');
+    let startX = 0, startY = 0, lastTap = 0;
+
+    pCont.addEventListener('pointerdown', e => { startX = e.clientX; startY = e.clientY; });
+    pCont.addEventListener('pointerup', e => {
+      let diffX = e.clientX - startX; let diffY = e.clientY - startY;
+
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) moveCarousel('next'); else moveCarousel('prev');
+        startCarousel(); return;
+      }
+
+      if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+          const bCont = document.getElementById('burst-container');
+          bCont.innerHTML = ''; 
+          for(let i=0; i<8; i++){
+            let h = document.createElement('div'); h.className = 'burst-heart'; h.innerText = '🤍';
+            let rect = pCont.getBoundingClientRect();
+            h.style.left = (e.clientX - rect.left) + 'px'; 
+            h.style.top = (e.clientY - rect.top) + 'px';
+            h.style.setProperty('--tx', (Math.random()*150-75) + 'px');
+            h.style.setProperty('--ty', (Math.random()*-150-50) + 'px');
+            h.style.setProperty('--rot', (Math.random()*90-45) + 'deg');
+            h.style.animation = `flyOut 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards`;
+            bCont.appendChild(h);
+          }
+          showToast('ভালোবাসি 🤍', 'success');
+        } else {
+          setTimeout(() => {
+            if (Date.now() - lastTap >= 250 && currentPhoto) {
+              document.getElementById('modal-img').src = currentPhoto.url;
+              document.getElementById('modal-date').innerText = currentPhoto.date;
+              document.body.style.overflow = 'hidden'; 
+              photoModal.style.display = 'flex'; 
+              setTimeout(() => photoModal.classList.add('show'), 10);
+            }
+          }, 260);
+        }
+        lastTap = now;
+      }
+    });
+
+    let modalTouchY = 0;
+    const modCont = document.getElementById('modal-img-container');
+    modCont.addEventListener('touchstart', e => { modalTouchY = e.changedTouches[0].screenY; }, {passive:true});
+    modCont.addEventListener('touchend', e => { 
+      let diffY = e.changedTouches[0].screenY - modalTouchY;
+      if(diffY > 80) closeModal(); 
+      else if(diffY < -80) closeModal(); 
+    });
+
+    function closeModal() {
+      photoModal.classList.remove('show'); 
+      setTimeout(() => { photoModal.style.display = 'none'; document.body.style.overflow = ''; }, 400);
+    }
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+
+    window.addEventListener('keydown', (e) => {
+       if(photoModal.style.display === 'flex') {
+          if(e.key === 'Escape') closeModal();
+       } else if (galleryView.style.display === 'flex') {
+          if(e.key === 'ArrowRight') { moveCarousel('next'); startCarousel(); }
+          if(e.key === 'ArrowLeft') { moveCarousel('prev'); startCarousel(); }
+       }
+    });
+
+    document.getElementById('download-btn').addEventListener('click', async () => {
+      if (!currentPhoto) return; showToast('ডাউনলোড শুরু হচ্ছে... 📥', 'success');
+      try {
+        const res = await fetch(currentPhoto.url); const blob = await res.blob();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = currentPhoto.fileName;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      } catch (err) { showToast('ডাউনলোডে সমস্যা 😔', 'error'); }
+    });
+
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+      if (!currentPhoto) return;
+      if (confirm('সত্যিই এই মায়াবী স্মৃতিটা মুছে ফেলবে মোহনা? 🥺')) {
+        try {
+          closeModal(); showToast('মুছে ফেলা হচ্ছে... ⏳');
+          await deleteDoc(doc(db, DB_COLLECTION, currentPhoto.id));
+          showToast('ছবি মুছে ফেলা হয়েছে 🗑️', 'success');
+        } catch (err) { showToast('ডিলিট করতে সমস্যা হচ্ছে!', 'error'); }
+      }
+    });
+
+  </script>
+</body>
+</html>
